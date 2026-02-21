@@ -5,72 +5,15 @@ from __future__ import annotations
 import os
 import subprocess
 from datetime import datetime, timezone
-from enum import Enum
-from typing import Optional
 
-from pydantic import BaseModel, Field
-
-
-class LockStatus(str, Enum):
-    ACTIVE = "active"
-    RELEASED = "released"
-
-
-class ScopeType(str, Enum):
-    FILE = "file"
-    FUNCTION = "function"
-    DIRECTORY = "directory"
+from pydantic import BaseModel
 
 
 class LockRecord(BaseModel):
-    task_id: str
-    scope: str
+    keyword: str
     claimed_by: str
     claimed_at: datetime
-    last_updated: datetime
-    status: LockStatus = LockStatus.ACTIVE
-    notes: str = ""
-
-
-class ConflictResult(str, Enum):
-    HARD = "hard"
-    SOFT = "soft"
-    NONE = "none"
-
-
-class ConflictDetail(BaseModel):
-    result: ConflictResult
-    blocking_lock: Optional[LockRecord] = None
-    message: str = ""
-
-
-class ClaimResult(BaseModel):
-    success: bool
-    task_id: str
-    scope: str
-    conflict: Optional[ConflictDetail] = None
-    message: str = ""
-
-
-class ReleaseResult(BaseModel):
-    success: bool
-    task_id: str
-    summary: str = ""
-    message: str = ""
-
-
-def parse_scope(scope: str) -> ScopeType:
-    """Determine scope type from string format.
-
-    - Trailing slash → directory
-    - Contains colon → function
-    - Otherwise → file
-    """
-    if scope.endswith("/"):
-        return ScopeType.DIRECTORY
-    if ":" in scope:
-        return ScopeType.FUNCTION
-    return ScopeType.FILE
+    status: str = "active"
 
 
 def get_agent_id() -> str:

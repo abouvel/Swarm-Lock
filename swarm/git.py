@@ -55,7 +55,7 @@ def add_and_commit(repo_dir: Path, paths: list[str], message: str) -> bool:
 
 def push(repo_dir: Path) -> bool:
     """Push to remote. Returns False on rejection (not an exception)."""
-    result = _run_git(["push"], cwd=repo_dir, check=False)
+    result = _run_git(["push", "--force-with-lease"], cwd=repo_dir, check=False)
     if result.returncode != 0:
         # Check if it's a rejection vs a real error
         stderr = result.stderr.lower()

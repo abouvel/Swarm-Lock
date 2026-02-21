@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "swarm hook pre-edit"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "swarm index-stale && echo 'Swarm index is current.' || echo 'Swarm index is stale — run /swarm-init to rebuild.'"
+          }
+        ]
+      }
+    ]
+  }
+}

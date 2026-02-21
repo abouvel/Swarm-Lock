@@ -21,7 +21,7 @@ dev = [
 ]
 
 [project.scripts]
-swarm = "cli:app"
+swarm = "swarm.cli:app"
 
 [tool.setuptools.packages.find]
 include = ["swarm*"]

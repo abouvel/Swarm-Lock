@@ -1,28 +1,25 @@
-"""Lock file I/O and SWARM_LOG.md appending.
+"""Lock file I/O.
 
 No git calls — this module only handles filesystem operations.
 """
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 from pathlib import Path
 
-from swarm.types import LockRecord, LockStatus
-
+from swarm.types import LockRecord
 
 CLAIMED_DIR = Path("current_tasks") / "claimed"
-LOG_FILE = "SWARM_LOG.md"
 
 
-def lock_file_path(repo_dir: Path, task_id: str) -> Path:
+def lock_file_path(repo_dir: Path, keyword: str) -> Path:
     """Return the path where a lock file should live."""
-    return repo_dir / CLAIMED_DIR / f"{task_id}.json"
+    return repo_dir / CLAIMED_DIR / f"{keyword}.lock.json"
 
 
 def write_lock(repo_dir: Path, record: LockRecord) -> Path:
     """Write a lock record to disk. Returns the path written."""
-    path = lock_file_path(repo_dir, record.task_id)
+    path = lock_file_path(repo_dir, record.keyword)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(record.model_dump_json(indent=2))
     return path
@@ -34,33 +31,23 @@ def read_lock(path: Path) -> LockRecord:
 
 
 def read_all_locks(repo_dir: Path) -> list[LockRecord]:
-    """Read all active lock files from the claimed directory."""
+    """Read all lock files from the claimed directory."""
     claimed = repo_dir / CLAIMED_DIR
     if not claimed.exists():
         return []
     locks = []
-    for f in claimed.glob("*.json"):
+    for f in claimed.glob("*.lock.json"):
         try:
-            record = read_lock(f)
-            if record.status == LockStatus.ACTIVE:
-                locks.append(record)
+            locks.append(read_lock(f))
         except Exception:
-            # Skip malformed lock files
             continue
     return locks
 
 
-def delete_lock(repo_dir: Path, task_id: str) -> bool:
+def delete_lock(repo_dir: Path, keyword: str) -> bool:
     """Delete a lock file. Returns True if it existed and was deleted."""
-    path = lock_file_path(repo_dir, task_id)
+    path = lock_file_path(repo_dir, keyword)
     if path.exists():
         path.unlink()
         return True
     return False
-
-
-def append_log(repo_dir: Path, entry: str) -> None:
-    """Append a line to SWARM_LOG.md."""
-    log_path = repo_dir / LOG_FILE
-    with log_path.open("a") as f:
-        f.write(entry + "\n")
