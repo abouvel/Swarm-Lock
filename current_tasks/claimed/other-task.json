@@ -1,0 +1,9 @@
+{
+  "task_id": "other-task",
+  "scope": "src/app.py",
+  "claimed_by": "a2",
+  "claimed_at": "2026-02-21T01:30:41.630369Z",
+  "last_updated": "2026-02-21T01:30:41.630369Z",
+  "status": "active",
+  "notes": ""
+}

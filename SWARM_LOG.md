@@ -5,3 +5,4 @@
 [2026-02-21T01:29:54Z] CLAIMED | my-task | src/app.py | a1
 [2026-02-21T01:30:03Z] CONFLICT | other-task | blocked by my-task | a2
 [2026-02-21T01:30:35Z] RELEASED | my-task | src/app.py | a1
+[2026-02-21T01:30:41Z] CLAIMED | other-task | src/app.py | a2
