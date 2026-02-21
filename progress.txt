@@ -14,3 +14,30 @@
   A new session should read this file, see which phase is next, and pick up from there. Each phase's tests should pass independently before moving to the next.
 
 [2026-02-20T19:03:00Z] Now implementing Phase 1 through Phase 6 in sequence.
+
+[2026-02-20T19:10:00Z] Phase 1 complete — swarm/types.py with LockStatus, ScopeType enums, LockRecord/ConflictDetail/ClaimResult/ReleaseResult pydantic models, parse_scope(), get_agent_id(). 14 tests pass.
+
+[2026-02-20T19:15:00Z] Phase 2 complete — swarm/git.py wraps all subprocess git calls with GitError exception, push() returns False on rejection instead of raising. swarm/locks.py handles lock file I/O and SWARM_LOG.md appending. 21 tests pass.
+
+[2026-02-20T19:20:00Z] Phase 3 complete — swarm/conflicts.py with check_conflict(). One design decision: claiming a whole file when a function on that file is locked is SOFT not HARD (overlap, not exact match). 16 tests pass.
+
+[2026-02-20T19:25:00Z] Phase 4 complete — swarm/claim.py and swarm/release.py implement the sacred flows. Both use filelock with 30s timeout, both roll back on push rejection (claim deletes lock file, release re-creates it from in-memory record). 16 tests pass.
+
+[2026-02-20T19:30:00Z] Phase 5 complete — swarm/status.py categorizes locks as active/stale (30min threshold), formats with rich tables. swarm/oracle.py runs pytest+ruff and captures output. 13 tests pass.
+
+[2026-02-20T19:31:00Z] All work is on feature/swarm-core-implementation branch. Committed after each phase. Now implementing Phase 6 (cli.py).
+
+[2026-02-20T19:40:00Z] Phase 6 complete — cli.py with typer commands: claim, release, status, check-conflict, oracle. All are thin wrappers that resolve repo_dir + agent_id and delegate to modules. 10 CLI tests pass.
+
+[2026-02-20T19:41:00Z] FULL SUITE: 90 tests, all passing. All 7 phases complete. Implementation summary:
+  - swarm/types.py: enums, pydantic models, parse_scope, get_agent_id
+  - swarm/git.py: subprocess git wrapper with GitError
+  - swarm/locks.py: lock file I/O + SWARM_LOG.md appending
+  - swarm/conflicts.py: scope conflict detection (HARD/SOFT/NONE)
+  - swarm/claim.py: distributed claim flow with filelock + rollback
+  - swarm/release.py: distributed release flow with rollback
+  - swarm/status.py: active/stale lock categorization + rich tables
+  - swarm/oracle.py: pytest/ruff runner
+  - cli.py: typer CLI entry point
+
+  Next steps: push branch, open PR for review. Then plugin wiring (skills/, .claude-plugin/) can be a separate task.
