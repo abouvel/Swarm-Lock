@@ -1,0 +1,16 @@
+[2026-02-20T19:00:00Z] Starting greenfield implementation of Swarm Lock Manager. Plan is finalized — standalone CLI first, plugin wiring later.
+
+[2026-02-20T19:01:00Z] Phase 0 scaffolding complete: pyproject.toml, swarm/__init__.py, tests/__init__.py, tests/conftest.py, current_tasks/claimed/.gitkeep, SWARM_LOG.md. Had to fix pyproject.toml build backend (setuptools.build_meta not _legacy) and add explicit package find config to exclude current_tasks/. All deps installed via pip install -e ".[dev]".
+
+[2026-02-20T19:02:00Z] Implementation is broken into 7 phases that can span multiple Claude Code sessions. Each phase is self-contained with its own module + test file. The build order is:
+  Phase 0: Scaffolding (DONE)
+  Phase 1: swarm/types.py + tests/test_types.py — foundation models, no deps
+  Phase 2: swarm/git.py + swarm/locks.py + their tests — can be done in parallel, both depend only on types
+  Phase 3: swarm/conflicts.py + tests — depends on types only, pure logic
+  Phase 4: swarm/claim.py + swarm/release.py + tests — the sacred flows, depend on git+locks+conflicts
+  Phase 5: swarm/status.py + swarm/oracle.py + tests — read-only modules
+  Phase 6: cli.py + tests/test_cli.py — thin typer entry point wiring everything together
+
+  A new session should read this file, see which phase is next, and pick up from there. Each phase's tests should pass independently before moving to the next.
+
+[2026-02-20T19:03:00Z] Now implementing Phase 1 through Phase 6 in sequence.

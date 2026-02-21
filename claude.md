@@ -122,6 +122,19 @@ export AGENT_ID=agent-1
 cd /path/to/test-repo
 claude-code --plugin-dir ./swarm-lock-manager
 
+## PROGRESS.txt Rules
+
+At the end of every phase update PROGRESS.txt with:
+
+- Which phases are fully done with passing tests
+- Which phase is next
+- Exact file to start with
+- Any known issues or gotchas discovered this session
+
+Never leave a session without updating PROGRESS.txt.
+A new instance should read this file and know exactly
+what to do next without opening any source file first.
+
 # Terminal 2
 
 export AGENT_ID=agent-2
@@ -201,3 +214,44 @@ rich for status output
 pytest for tests
 Git over SSH or HTTPS as the distributed coordination layer
 No database
+
+## Git SSH Key
+
+The GitHub SSH key on this machine has NO passphrase. Git push/pull over SSH will not prompt for a password. Do not add any passphrase handling, SSH agent logic, or credential helper workarounds — they are unnecessary and will only cause problems.
+
+## Git Workflow
+
+### Branches
+
+Create a new branch for every discrete task or feature. Never work directly on main. Name branches after the task:
+
+```bash
+git checkout -b feature/<task-id>
+```
+
+### Commits
+
+Commit after every meaningful unit of work — not after every file change, but not in one giant commit at the end either. A good rule of thumb is: if you'd want to be able to roll back to this point, commit it. Always follow the commit message format:
+
+```
+swarm: claim <task-id> on <scope>
+swarm: release <task-id> — <summary>
+feat: <what you built>
+fix: <what you fixed>
+chore: <cleanup, config, deps>
+```
+
+### Pull Requests
+
+Open a PR when a task is complete and all tests pass. Never merge your own PR — leave it for review. PR title should match the branch name. In the PR description write:
+
+- What changed and why
+- How to test it
+- Any known limitations or follow-on work
+
+### Never
+
+- Commit directly to main
+- Push broken or untested code
+- Merge without a passing test suite
+- Leave a branch sitting open more than a day without a commit or PR
