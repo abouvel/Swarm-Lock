@@ -90,6 +90,18 @@ def _release_inner(
             message=f"Lock owned by {record.claimed_by}, not {agent}. Cannot release another agent's lock.",
         )
 
+    # Step 3.5: Auto-commit any dirty changes before releasing
+    try:
+        if git.has_dirty_tree(repo_dir):
+            commit_msg = f"feat: work on {task_id} — {summary}" if summary else f"feat: work on {task_id}"
+            git.commit_all(repo_dir, commit_msg)
+            git.push_branch(repo_dir)
+    except git.GitError as e:
+        return ReleaseResult(
+            success=False, task_id=task_id,
+            message=f"Failed to commit/push working changes: {e}",
+        )
+
     # Step 4: Delete lock file and append log
     relative_lock = str(lf_path.relative_to(repo_dir))
     delete_lock(repo_dir, task_id)

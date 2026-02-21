@@ -14,6 +14,7 @@ from rich.console import Console
 from swarm import git
 from swarm.claim import claim as do_claim
 from swarm.conflicts import check_conflict
+from swarm.hooks import install_post_checkout_hook, uninstall_post_checkout_hook
 from swarm.locks import read_all_locks
 from swarm.oracle import run_oracle
 from swarm.release import release as do_release
@@ -112,6 +113,25 @@ def oracle():
 
     if not result.success:
         raise typer.Exit(code=1)
+
+
+@app.command(name="install-hook")
+def install_hook_cmd():
+    """Install git post-checkout hook to auto-release locks on branch switch."""
+    repo = _resolve_repo()
+    cli_abs = str(Path(__file__).resolve())
+    hook_path = install_post_checkout_hook(repo, cli_abs)
+    console.print(f"[green]✓[/green] Installed post-checkout hook at {hook_path}")
+
+
+@app.command(name="uninstall-hook")
+def uninstall_hook_cmd():
+    """Remove the swarm post-checkout hook."""
+    repo = _resolve_repo()
+    if uninstall_post_checkout_hook(repo):
+        console.print("[green]✓[/green] Removed post-checkout hook")
+    else:
+        console.print("[yellow]No swarm hook found to remove[/yellow]")
 
 
 if __name__ == "__main__":
