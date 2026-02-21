@@ -1,9 +1,0 @@
-{
-  "task_id": "task-42",
-  "scope": "src/auth/session.py",
-  "claimed_by": "agent-1",
-  "claimed_at": "2026-02-21T01:16:46.037235Z",
-  "last_updated": "2026-02-21T01:16:46.037235Z",
-  "status": "active",
-  "notes": ""
-}
